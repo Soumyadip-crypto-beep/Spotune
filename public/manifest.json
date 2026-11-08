@@ -1,0 +1,16 @@
+{
+  "name": "Spotune - Ad-Free Hi-Fi Music",
+  "short_name": "Spotune",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#1ed760",
+  "description": "High-fidelity, ad-free, buffer-free music streaming website and app.",
+  "icons": [
+    {
+      "src": "/assets/logo.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

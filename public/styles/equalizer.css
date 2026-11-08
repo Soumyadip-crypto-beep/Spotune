@@ -1,0 +1,122 @@
+/* Spotune - Graphic Equalizer & Spectrum Visualizer Styles */
+
+.equalizer-box {
+  max-width: 580px;
+}
+
+.visualizer-container {
+  width: 100%;
+  height: 96px;
+  background: #121212;
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#eq-visualizer-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.visualizer-label {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--accent-green);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.eq-presets-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  background: #181818;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+}
+
+.eq-presets-row label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.eq-presets-row select {
+  background: #242424;
+  color: #fff;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+}
+
+.eq-presets-row select:focus {
+  border-color: var(--accent-green);
+}
+
+.eq-sliders-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  padding: 16px 8px;
+  background: #181818;
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+}
+
+.eq-band {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.band-val {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-green);
+  font-variant-numeric: tabular-nums;
+}
+
+.eq-slider {
+  -webkit-appearance: slider-vertical;
+  width: 18px;
+  height: 130px;
+  background: #242424;
+  outline: none;
+  cursor: pointer;
+  accent-color: var(--accent-green);
+}
+
+.band-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.band-label small {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--text-subdued);
+}
+
+.eq-reset-row {
+  display: flex;
+  justify-content: flex-end;
+}

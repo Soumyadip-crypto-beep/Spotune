@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Spotune - Ad-Free Hi-Fi Music Streaming</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/logo.svg">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#121212">
+  <meta name="description" content="Spotify-like ad-free music streaming with zero lag, 320kbps Hi-Fi audio quality, and synchronized lyrics.">
+
+  <!-- Inter / Circular-like system fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="stylesheet" href="/styles/player.css">
+  <link rel="stylesheet" href="/styles/lyrics.css">
+  <link rel="stylesheet" href="/styles/equalizer.css">
+</head>
+<body class="theme-spotify">
+  <div class="app-container">
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="#" class="brand-logo" id="nav-brand">
+          <img src="/assets/logo.svg" alt="Spotune Logo" class="brand-icon">
+          <span class="brand-text">Spotune</span>
+          <span class="brand-badge">Hi-Fi</span>
+        </a>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-item active" data-view="home" id="nav-home">
+          <svg viewBox="0 0 24 24" class="icon"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>
+          <span>Home</span>
+        </button>
+        <button class="nav-item" data-view="search" id="nav-search">
+          <svg viewBox="0 0 24 24" class="icon"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <span>Search</span>
+        </button>
+        <button class="nav-item" data-view="library" id="nav-library">
+          <svg viewBox="0 0 24 24" class="icon"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
+          <span>Your Library</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="library-shortcuts">
+        <button class="nav-item shortcut-btn" id="shortcut-liked">
+          <div class="liked-icon-box">
+            <svg viewBox="0 0 24 24" class="icon icon-heart"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          </div>
+          <span>Liked Songs</span>
+          <span class="liked-count" id="liked-count-badge">0</span>
+        </button>
+
+        <button class="nav-item shortcut-btn" id="btn-create-playlist">
+          <div class="add-icon-box">
+            <svg viewBox="0 0 24 24" class="icon"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          </div>
+          <span>Create Playlist</span>
+        </button>
+      </div>
+
+      <!-- User Playlists Scrollable List -->
+      <div class="custom-playlists-container">
+        <div class="playlists-title">YOUR PLAYLISTS</div>
+        <ul class="custom-playlists-list" id="sidebar-playlist-list">
+          <!-- Populated dynamically -->
+        </ul>
+      </div>
+
+      <!-- Sidebar Footer / Quality Indicator -->
+      <div class="sidebar-footer">
+        <button class="quality-badge-btn" id="btn-toggle-quality" title="Change Audio Bitrate">
+          <span class="badge-dot"></span>
+          <span id="sidebar-quality-label">320kbps Hi-Fi</span>
+        </button>
+        <div class="ad-free-tag">
+          <svg viewBox="0 0 24 24" class="icon-shield"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+          <span>100% Ad-Free</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT VIEWPORT -->
+    <main class="main-content" id="main-content">
+      <!-- TOP NAVIGATION BAR -->
+      <header class="top-nav">
+        <div class="history-controls">
+          <button class="circle-btn" id="btn-nav-back" title="Go Back">
+            <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+          </button>
+          <button class="circle-btn" id="btn-nav-forward" title="Go Forward">
+            <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+          </button>
+        </div>
+
+        <!-- Dynamic Search Bar (Visible in search view or global) -->
+        <div class="search-bar-wrapper" id="top-search-wrapper">
+          <svg viewBox="0 0 24 24" class="search-input-icon"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="text" id="global-search-input" placeholder="What do you want to play? (Songs, Artists, Albums)" autocomplete="off">
+          <button class="clear-search-btn" id="btn-clear-search" style="display:none;">✕</button>
+        </div>
+
+        <div class="top-actions">
+          <a href="/Spotune.exe" download="Spotune.exe" class="btn-download-app" id="btn-download-app-link" title="Download Desktop App for Windows (.exe)">
+            <svg viewBox="0 0 24 24" class="icon"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
+            <span>Download .EXE</span>
+          </a>
+          <button class="btn-theme-profile" id="btn-info" title="About Spotune">
+            <span class="user-avatar">SP</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- SCROLLABLE VIEW CONTAINER -->
+      <div class="scroll-view" id="scroll-view">
+        <!-- VIEW 1: HOME -->
+        <section class="view-panel active" id="view-home">
+          <!-- Dynamic Greeting Header -->
+          <div class="greeting-banner">
+            <h1 class="greeting-text" id="greeting-text">Good evening</h1>
+          </div>
+
+          <!-- Quick Access Cards (Top 6) -->
+          <div class="quick-access-grid" id="quick-access-grid">
+            <!-- Injected dynamically -->
+          </div>
+
+          <!-- Dynamic Sections: Trending, Hits, Lo-Fi, etc. -->
+          <div class="feed-sections-container" id="feed-sections-container">
+            <div class="feed-loading-state">
+              <div class="spinner"></div>
+              <p>Loading ultra-quality ad-free music...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW 2: SEARCH -->
+        <section class="view-panel" id="view-search">
+          <div class="search-view-header">
+            <div class="search-filter-pills" id="search-filter-pills">
+              <button class="filter-pill active" data-filter="all">All</button>
+              <button class="filter-pill" data-filter="song">Songs</button>
+              <button class="filter-pill" data-filter="album">Albums</button>
+              <button class="filter-pill" data-filter="playlist">Playlists</button>
+            </div>
+          </div>
+
+          <!-- Default Search State: Browse Categories -->
+          <div class="browse-categories" id="browse-categories">
+            <h2 class="section-title">Browse All Genres & Moods</h2>
+            <div class="genres-grid" id="genres-grid">
+              <!-- Genre cards -->
+            </div>
+          </div>
+
+          <!-- Search Results Container -->
+          <div class="search-results-container" id="search-results-container" style="display:none;">
+            <!-- Top Result + Song list -->
+            <div class="search-top-row" id="search-top-row">
+              <div class="top-result-card" id="search-top-result">
+                <!-- Injected -->
+              </div>
+              <div class="search-songs-list" id="search-songs-list">
+                <!-- 4 Top songs -->
+              </div>
+            </div>
+
+            <!-- Full Song Results -->
+            <div class="search-section" id="section-all-songs">
+              <h2 class="section-title">Songs</h2>
+              <div class="song-table" id="search-full-songs-table"></div>
+            </div>
+
+            <!-- Album Results -->
+            <div class="search-section" id="section-albums">
+              <h2 class="section-title">Albums</h2>
+              <div class="card-carousel" id="search-albums-grid"></div>
+            </div>
+
+            <!-- Playlist Results -->
+            <div class="search-section" id="section-playlists">
+              <h2 class="section-title">Playlists</h2>
+              <div class="card-carousel" id="search-playlists-grid"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW 3: YOUR LIBRARY -->
+        <section class="view-panel" id="view-library">
+          <div class="library-header">
+            <h1 class="library-title">Your Library</h1>
+            <div class="library-actions">
+              <button class="btn-create-pill" id="btn-library-create">+ New Playlist</button>
+            </div>
+          </div>
+
+          <div class="library-grid" id="library-grid">
+            <!-- Liked Songs Giant Card -->
+            <div class="liked-songs-hero-card" id="card-hero-liked">
+              <div class="liked-hero-content">
+                <p class="liked-hero-preview" id="liked-hero-preview">No liked songs yet.</p>
+                <div>
+                  <h2 class="liked-hero-title">Liked Songs</h2>
+                  <p class="liked-hero-count" id="liked-hero-count">0 songs</p>
+                </div>
+              </div>
+              <button class="hero-play-fab" id="btn-play-all-liked" title="Play Liked Songs">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
+            <!-- Custom Playlists will appear here -->
+          </div>
+        </section>
+
+        <!-- VIEW 4: ALBUM / PLAYLIST DETAIL VIEW -->
+        <section class="view-panel" id="view-detail">
+          <div class="detail-hero" id="detail-hero">
+            <div class="detail-cover-wrapper">
+              <img src="/assets/default-cover.svg" alt="Cover" class="detail-cover" id="detail-cover-img">
+            </div>
+            <div class="detail-meta">
+              <span class="detail-type-tag" id="detail-type-tag">PLAYLIST</span>
+              <h1 class="detail-title" id="detail-title">Playlist Title</h1>
+              <p class="detail-desc" id="detail-desc"></p>
+              <div class="detail-subline" id="detail-subline">
+                <span id="detail-artist-owner">Spotune</span> • 
+                <span id="detail-year">2024</span> • 
+                <span id="detail-tracks-count">0 songs</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-actions-bar">
+            <button class="circle-play-btn-huge" id="btn-detail-play-all" title="Play All">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <button class="circle-action-btn" id="btn-detail-shuffle" title="Shuffle Play">
+              <svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
+            </button>
+            <button class="circle-action-btn" id="btn-detail-like" title="Save to Library">
+              <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </button>
+          </div>
+
+          <!-- Tracklist Table -->
+          <div class="tracklist-container">
+            <div class="tracklist-header-row">
+              <span class="col-idx">#</span>
+              <span class="col-title">Title</span>
+              <span class="col-album">Album</span>
+              <span class="col-time">
+                <svg viewBox="0 0 24 24" class="icon-clock"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 .99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+              </span>
+            </div>
+            <div class="tracklist-body" id="detail-tracklist-body">
+              <!-- Injected dynamically -->
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- RIGHT/OVERLAY: KARAOKE LYRICS DRAWER -->
+    <div class="lyrics-overlay" id="lyrics-overlay">
+      <div class="lyrics-backdrop" id="lyrics-backdrop"></div>
+      <div class="lyrics-header">
+        <div class="lyrics-song-info">
+          <h2 id="lyrics-track-title">Track Title</h2>
+          <p id="lyrics-track-artist">Artist Name</p>
+        </div>
+        <button class="circle-btn" id="btn-close-lyrics" title="Close Lyrics">✕</button>
+      </div>
+      <div class="lyrics-scroll-container" id="lyrics-scroll-container">
+        <div class="lyrics-lines" id="lyrics-lines">
+          <p class="lyrics-placeholder">Click play on any song to experience synchronized karaoke lyrics.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT/OVERLAY: PLAY QUEUE DRAWER -->
+    <div class="queue-drawer" id="queue-drawer">
+      <div class="queue-header">
+        <h2>Play Queue</h2>
+        <button class="circle-btn" id="btn-close-queue">✕</button>
+      </div>
+      <div class="queue-section">
+        <h3>Now Playing</h3>
+        <div class="queue-item current" id="queue-current-item">
+          <!-- Current song item -->
+        </div>
+      </div>
+      <div class="queue-section">
+        <div class="queue-subhead">
+          <h3>Next Up</h3>
+          <button class="btn-text-clear" id="btn-clear-queue">Clear</button>
+        </div>
+        <div class="queue-list" id="queue-items-list">
+          <!-- Up next items -->
+        </div>
+      </div>
+    </div>
+
+    <!-- AUDIO EQUALIZER MODAL -->
+    <div class="modal-backdrop" id="equalizer-modal" style="display:none;">
+      <div class="modal-box equalizer-box">
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <svg viewBox="0 0 24 24" class="icon"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg>
+            <h2>Pro Studio Equalizer & Audio FX</h2>
+          </div>
+          <button class="circle-btn" id="btn-close-eq">✕</button>
+        </div>
+
+        <div class="eq-content">
+          <!-- Real-Time Spectrum Visualizer Canvas -->
+          <div class="visualizer-container">
+            <canvas id="eq-visualizer-canvas" width="460" height="90"></canvas>
+            <div class="visualizer-label">LIVE FREQUENCY SPECTRUM (320KBPS HI-FI)</div>
+          </div>
+
+          <!-- Presets Dropdown -->
+          <div class="eq-presets-row">
+            <label for="eq-preset-select">Sound Preset:</label>
+            <select id="eq-preset-select">
+              <option value="flat">Flat (Studio Reference)</option>
+              <option value="bass" selected>Bass Boost (Deep Punch)</option>
+              <option value="pop">Pop (Vibrant & Punchy)</option>
+              <option value="rock">Rock & Metal (Warm Drive)</option>
+              <option value="electronic">Electronic / Club (Hi-Energy)</option>
+              <option value="vocal">Vocal Enhancer (Crisp Voices)</option>
+              <option value="acoustic">Acoustic & Classical</option>
+            </select>
+          </div>
+
+          <!-- 5-Band Sliders -->
+          <div class="eq-sliders-grid">
+            <div class="eq-band">
+              <span class="band-val" id="val-band-60">0dB</span>
+              <input type="range" class="eq-slider" id="band-60" min="-12" max="12" step="0.5" value="0" orient="vertical">
+              <span class="band-label">60Hz<br><small>Sub Bass</small></span>
+            </div>
+            <div class="eq-band">
+              <span class="band-val" id="val-band-250">0dB</span>
+              <input type="range" class="eq-slider" id="band-250" min="-12" max="12" step="0.5" value="0" orient="vertical">
+              <span class="band-label">250Hz<br><small>Bass</small></span>
+            </div>
+            <div class="eq-band">
+              <span class="band-val" id="val-band-1000">0dB</span>
+              <input type="range" class="eq-slider" id="band-1000" min="-12" max="12" step="0.5" value="0" orient="vertical">
+              <span class="band-label">1kHz<br><small>Mid</small></span>
+            </div>
+            <div class="eq-band">
+              <span class="band-val" id="val-band-4000">0dB</span>
+              <input type="range" class="eq-slider" id="band-4000" min="-12" max="12" step="0.5" value="0" orient="vertical">
+              <span class="band-label">4kHz<br><small>Presence</small></span>
+            </div>
+            <div class="eq-band">
+              <span class="band-val" id="val-band-14000">0dB</span>
+              <input type="range" class="eq-slider" id="band-14000" min="-12" max="12" step="0.5" value="0" orient="vertical">
+              <span class="band-label">14kHz<br><small>Treble</small></span>
+            </div>
+          </div>
+
+          <div class="eq-reset-row">
+            <button class="btn-secondary" id="btn-reset-eq">Reset to Flat</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUDIO QUALITY SELECTOR MODAL -->
+    <div class="modal-backdrop" id="quality-modal" style="display:none;">
+      <div class="modal-box quality-box">
+        <div class="modal-header">
+          <h2>Streaming Audio Quality</h2>
+          <button class="circle-btn" id="btn-close-quality">✕</button>
+        </div>
+        <div class="quality-options">
+          <label class="quality-option">
+            <input type="radio" name="audio-quality" value="320" checked>
+            <div class="quality-meta">
+              <span class="q-title">Very High / Studio Master (320 kbps AAC) <span class="q-badge">RECOMMENDED</span></span>
+              <span class="q-desc">Uncompressed studio depth, zero lag, crystalline highs and rich bass.</span>
+            </div>
+          </label>
+          <label class="quality-option">
+            <input type="radio" name="audio-quality" value="160">
+            <div class="quality-meta">
+              <span class="q-title">High Quality (160 kbps AAC)</span>
+              <span class="q-desc">Great balance between data efficiency and high-fidelity sound.</span>
+            </div>
+          </label>
+          <label class="quality-option">
+            <input type="radio" name="audio-quality" value="96">
+            <div class="quality-meta">
+              <span class="q-title">Normal / Data Saver (96 kbps AAC)</span>
+              <span class="q-desc">Optimized for very weak or metered connections.</span>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CREATE PLAYLIST MODAL -->
+    <div class="modal-backdrop" id="create-playlist-modal" style="display:none;">
+      <div class="modal-box prompt-box">
+        <div class="modal-header">
+          <h2>Create New Playlist</h2>
+          <button class="circle-btn" id="btn-close-create-playlist">✕</button>
+        </div>
+        <div class="prompt-body">
+          <input type="text" id="new-playlist-name" placeholder="Playlist Name (e.g. Late Night Vibes)" maxlength="50">
+          <button class="btn-primary" id="btn-confirm-create-playlist">Create Playlist</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM PERSISTENT PLAYER BAR -->
+    <footer class="player-bar" id="player-bar">
+      <!-- LEFT: Track Info -->
+      <div class="player-left">
+        <div class="now-playing-art-wrap">
+          <img src="/assets/default-cover.svg" alt="Now Playing" class="now-playing-art" id="player-track-img">
+        </div>
+        <div class="now-playing-meta">
+          <div class="track-title-wrap">
+            <span class="track-title" id="player-track-title">Select a song</span>
+          </div>
+          <div class="track-artist-wrap">
+            <span class="track-artist" id="player-track-artist">Spotune Hi-Fi</span>
+          </div>
+        </div>
+        <button class="circle-icon-btn btn-like-track" id="player-btn-like" title="Save to Liked Songs">
+          <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        </button>
+      </div>
+
+      <!-- CENTER: Playback Controls & Progress Bar -->
+      <div class="player-center">
+        <div class="playback-controls">
+          <button class="control-btn" id="player-btn-shuffle" title="Shuffle (S)">
+            <svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
+          </button>
+          <button class="control-btn" id="player-btn-prev" title="Previous Track (Left Arrow)">
+            <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+          </button>
+          <button class="play-pause-btn" id="player-btn-play" title="Play / Pause (Spacebar)">
+            <svg viewBox="0 0 24 24" id="play-pause-icon"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <button class="control-btn" id="player-btn-next" title="Next Track (Right Arrow)">
+            <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+          </button>
+          <button class="control-btn" id="player-btn-repeat" title="Repeat (R)">
+            <svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
+          </button>
+        </div>
+
+        <div class="playback-timeline">
+          <span class="time-label" id="player-current-time">0:00</span>
+          <div class="progress-bar-container" id="player-seek-container">
+            <div class="progress-buffered" id="player-buffered-bar"></div>
+            <div class="progress-fill" id="player-seek-fill"></div>
+            <div class="progress-thumb" id="player-seek-thumb"></div>
+          </div>
+          <span class="time-label" id="player-total-time">0:00</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: Audio Tools & Volume -->
+      <div class="player-right">
+        <!-- Karaoke Lyrics Button -->
+        <button class="control-btn-sub" id="player-btn-lyrics" title="Karaoke Lyrics (L)">
+          <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
+        </button>
+
+        <!-- Up Next Queue Button -->
+        <button class="control-btn-sub" id="player-btn-queue" title="Queue">
+          <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+        </button>
+
+        <!-- Pro Equalizer Button -->
+        <button class="control-btn-sub" id="player-btn-eq" title="Equalizer & Audio FX">
+          <svg viewBox="0 0 24 24"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg>
+        </button>
+
+        <!-- Download Song MP3 -->
+        <button class="control-btn-sub" id="player-btn-download" title="Download High-Res Audio">
+          <svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
+        </button>
+
+        <!-- Volume Controls -->
+        <div class="volume-container">
+          <button class="control-btn-sub" id="player-btn-volume" title="Mute / Unmute (M)">
+            <svg viewBox="0 0 24 24" id="volume-icon"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+          </button>
+          <div class="volume-bar-container" id="player-volume-container">
+            <div class="volume-fill" id="player-volume-fill"></div>
+            <div class="volume-thumb" id="player-volume-thumb"></div>
+          </div>
+        </div>
+
+        <!-- Fullscreen Visualizer -->
+        <button class="control-btn-sub" id="player-btn-fullscreen" title="Fullscreen Visualizer (F)">
+          <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Audio Elements: Current Audio + Invisible Preload Audio for Gapless Zero-Buffer Transitions -->
+  <audio id="main-audio" preload="auto"></audio>
+  <audio id="preload-audio" preload="auto" style="display:none;"></audio>
+
+  <!-- Notification Toast -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="/js/storage.js"></script>
+  <script src="/js/equalizer.js"></script>
+  <script src="/js/lyrics.js"></script>
+  <script src="/js/player.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

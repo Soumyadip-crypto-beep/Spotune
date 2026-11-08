@@ -1,0 +1,30 @@
+{
+  "name": "spotune",
+  "version": "1.0.0",
+  "description": "Ad-free Spotify-like music streaming website and downloadable desktop executable with 320kbps Hi-Fi audio quality and synced lyrics.",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js",
+    "build:exe": "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe /target:winexe /out:Spotune.exe /r:System.Windows.Forms.dll /r:System.Drawing.dll src-desktop\\launcher.cs && copy Spotune.exe public\\Spotune.exe",
+    "start:desktop": "Spotune.exe"
+  },
+  "keywords": [
+    "spotify",
+    "music-player",
+    "streaming",
+    "ad-free",
+    "hifi",
+    "320kbps",
+    "lyrics",
+    "karaoke",
+    "desktop-app"
+  ],
+  "author": "Spotune Team",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
+    "express": "^4.21.2"
+  }
+}
